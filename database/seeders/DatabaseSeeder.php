@@ -13,11 +13,30 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
-
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+        // Create admin user
+        $admin = User::factory()->create([
+            'name' => 'Admin User',
+            'email' => 'admin@fixflow.com',
+            'role' => 'admin',
         ]);
+
+        // Create technician users
+        $technicians = User::factory(5)->create([
+            'role' => 'technician',
+        ]);
+
+        // Create assets
+        $assets = \App\Models\Asset::factory(20)->create();
+
+        // Create maintenances for assets
+        foreach ($assets as $asset) {
+            $maintenanceCount = rand(2, 8);
+            for ($i = 0; $i < $maintenanceCount; $i++) {
+                \App\Models\Maintenance::factory()->create([
+                    'asset_id' => $asset->id,
+                    'user_id' => $technicians->random()->id,
+                ]);
+            }
+        }
     }
 }
