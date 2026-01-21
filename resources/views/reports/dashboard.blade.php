@@ -1,22 +1,14 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Dashboard') }}
+            {{ __('Reports Dashboard') }}
         </h2>
     </x-slot>
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <!-- Welcome Message -->
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mb-6">
-                <div class="p-6 text-gray-900">
-                    <h3 class="text-lg font-semibold mb-2">{{ __("Welcome back!") }}</h3>
-                    <p class="text-gray-600">{{ __("Here's a quick overview of your assets and maintenance activities.") }}</p>
-                </div>
-            </div>
-
-            <!-- Quick Stats -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+            <!-- General Statistics -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
                 <!-- Total Assets -->
                 <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                     <div class="p-6">
@@ -28,7 +20,7 @@
                             </div>
                             <div class="ml-4">
                                 <h3 class="text-sm font-medium text-gray-500">Total Assets</h3>
-                                <p class="text-2xl font-semibold text-gray-900">{{ $stats['total_assets'] }}</p>
+                                <p class="text-2xl font-semibold text-gray-900">{{ $statistics['total_assets'] }}</p>
                             </div>
                         </div>
                     </div>
@@ -44,8 +36,8 @@
                                 </svg>
                             </div>
                             <div class="ml-4">
-                                <h3 class="text-sm font-medium text-gray-500">Active</h3>
-                                <p class="text-2xl font-semibold text-gray-900">{{ $stats['active_assets'] }}</p>
+                                <h3 class="text-sm font-medium text-gray-500">Active Assets</h3>
+                                <p class="text-2xl font-semibold text-gray-900">{{ $statistics['active_assets'] }}</p>
                             </div>
                         </div>
                     </div>
@@ -61,8 +53,8 @@
                                 </svg>
                             </div>
                             <div class="ml-4">
-                                <h3 class="text-sm font-medium text-gray-500">Broken</h3>
-                                <p class="text-2xl font-semibold text-gray-900">{{ $stats['broken_assets'] }}</p>
+                                <h3 class="text-sm font-medium text-gray-500">Broken Assets</h3>
+                                <p class="text-2xl font-semibold text-gray-900">{{ $statistics['broken_assets'] }}</p>
                             </div>
                         </div>
                     </div>
@@ -79,42 +71,63 @@
                                 </svg>
                             </div>
                             <div class="ml-4">
-                                <h3 class="text-sm font-medium text-gray-500">Maintenances</h3>
-                                <p class="text-2xl font-semibold text-gray-900">{{ $stats['total_maintenances'] }}</p>
+                                <h3 class="text-sm font-medium text-gray-500">Total Maintenances</h3>
+                                <p class="text-2xl font-semibold text-gray-900">{{ $statistics['total_maintenances'] }}</p>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Quick Actions -->
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <!-- Total Cost -->
+            <!-- Cost Statistics -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                <!-- Total Costs -->
                 <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                     <div class="p-6">
-                        <h3 class="text-lg font-semibold text-gray-800 mb-2">Total Maintenance Costs</h3>
-                        <p class="text-3xl font-bold text-gray-900 mb-4">${{ number_format($stats['total_cost'], 2) }}</p>
-                        <a href="{{ route('reports.monthly-costs') }}" class="text-blue-600 hover:text-blue-800 text-sm font-medium">
-                            View detailed costs →
-                        </a>
+                        <h3 class="text-lg font-semibold text-gray-800 mb-4">Total Maintenance Costs</h3>
+                        <p class="text-3xl font-bold text-gray-900">${{ number_format($statistics['total_cost'], 2) }}</p>
                     </div>
                 </div>
 
-                <!-- View Reports -->
+                <!-- Maintenance Type Breakdown -->
                 <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                     <div class="p-6">
-                        <h3 class="text-lg font-semibold text-gray-800 mb-4">Quick Links</h3>
+                        <h3 class="text-lg font-semibold text-gray-800 mb-4">Maintenance Breakdown</h3>
                         <div class="space-y-3">
-                            <a href="{{ route('reports.dashboard') }}" class="block text-blue-600 hover:text-blue-800 font-medium">
-                                📊 Full Reports Dashboard
-                            </a>
-                            <a href="{{ route('assets.index') }}" class="block text-blue-600 hover:text-blue-800 font-medium">
-                                🏢 Manage Assets
-                            </a>
-                            <a href="{{ route('maintenances.index') }}" class="block text-blue-600 hover:text-blue-800 font-medium">
-                                🔧 View Maintenances
-                            </a>
+                            <div>
+                                <div class="flex items-center justify-between mb-1">
+                                    <span class="text-sm font-medium text-gray-600">Preventive</span>
+                                    <span class="text-sm font-semibold text-gray-900">{{ $statistics['preventive_maintenances'] }}</span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-2">
+                                    <div class="bg-blue-600 h-2 rounded-full" style="width: {{ $statistics['total_maintenances'] > 0 ? ($statistics['preventive_maintenances'] / $statistics['total_maintenances'] * 100) : 0 }}%"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex items-center justify-between mb-1">
+                                    <span class="text-sm font-medium text-gray-600">Corrective</span>
+                                    <span class="text-sm font-semibold text-gray-900">{{ $statistics['corrective_maintenances'] }}</span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-2">
+                                    <div class="bg-orange-600 h-2 rounded-full" style="width: {{ $statistics['total_maintenances'] > 0 ? ($statistics['corrective_maintenances'] / $statistics['total_maintenances'] * 100) : 0 }}%"></div>
+                                </div>
+                            </div>
                         </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Links -->
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                <div class="p-6">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">Report Actions</h3>
+                    <div class="flex flex-wrap gap-4">
+                        <a href="{{ route('reports.monthly-costs') }}" class="inline-flex items-center px-4 py-2 bg-blue-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700 focus:bg-blue-700 active:bg-blue-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition ease-in-out duration-150">
+                            View Monthly Costs
+                        </a>
+                        <a href="{{ route('assets.index') }}" class="inline-flex items-center px-4 py-2 bg-gray-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition ease-in-out duration-150">
+                            View All Assets
+                        </a>
                     </div>
                 </div>
             </div>
