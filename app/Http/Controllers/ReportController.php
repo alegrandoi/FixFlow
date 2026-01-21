@@ -32,8 +32,13 @@ class ReportController extends Controller
 
     public function monthlyCosts(Request $request)
     {
-        $month = $request->query('month');
-        $year = $request->query('year');
+        $validated = $request->validate([
+            'month' => 'nullable|integer|min:1|max:12',
+            'year' => 'nullable|integer|min:2000|max:2100',
+        ]);
+        
+        $month = $validated['month'] ?? null;
+        $year = $validated['year'] ?? null;
         
         $costs = $this->reportService->getMonthlyCosts($month, $year);
         
@@ -42,8 +47,13 @@ class ReportController extends Controller
 
     public function exportMonthlyCosts(Request $request)
     {
-        $month = $request->query('month');
-        $year = $request->query('year');
+        $validated = $request->validate([
+            'month' => 'nullable|integer|min:1|max:12',
+            'year' => 'nullable|integer|min:2000|max:2100',
+        ]);
+        
+        $month = $validated['month'] ?? null;
+        $year = $validated['year'] ?? null;
         
         $costs = $this->reportService->getMonthlyCosts($month, $year);
         

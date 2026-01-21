@@ -10,12 +10,12 @@ use Illuminate\Support\Collection;
 class ReportService
 {
     /**
-     * Genera un informe PDF del historial de un activo.
+     * Generate a PDF report for an asset's maintenance history.
      *
-     * @param int $assetId El ID del activo
+     * @param int $assetId The asset ID
      * @param string $range 'monthly' | 'yearly' | 'all'
      * @return \Barryvdh\DomPDF\PDF
-     * @throws \Exception Si el activo no existe
+     * @throws \Exception If the asset does not exist
      */
     public function generateAssetReport(int $assetId, string $range = 'all')
     {
@@ -45,34 +45,40 @@ class ReportService
     }
 
     /**
-     * Genera un informe de costos mensuales por tipo de activo.
+     * Get monthly maintenance costs grouped by asset.
      *
-     * @param int|null $month
-     * @param int|null $year
+     * @param int|null $month Month (1-12) or null for all months
+     * @param int|null $year Year or null for all years
      * @return Collection
      */
     public function getMonthlyCosts(?int $month = null, ?int $year = null): Collection
     {
-        $month = $month ?? now()->month;
-        $year = $year ?? now()->year;
+        $query = Maintenance::with('asset');
 
-        return Maintenance::with('asset')
-            ->whereYear('performed_at', $year)
-            ->whereMonth('performed_at', $month)
-            ->get()
+        if ($year !== null) {
+            $query->whereYear('performed_at', $year);
+        }
+
+        if ($month !== null) {
+            $query->whereMonth('performed_at', $month);
+        }
+
+        return $query->get()
             ->groupBy('asset.name')
-            ->map(function ($maintenances) {
-                return [
+            ->map(function ($maintenances, $assetName) {
+                return (object) [
+                    'asset_name' => $assetName,
                     'total_cost' => $maintenances->sum('cost'),
                     'preventive_cost' => $maintenances->where('type', 'preventive')->sum('cost'),
                     'corrective_cost' => $maintenances->where('type', 'corrective')->sum('cost'),
                     'count' => $maintenances->count(),
                 ];
-            });
+            })
+            ->values();
     }
 
     /**
-     * Obtiene estadísticas generales del sistema.
+     * Get general statistics for the system.
      *
      * @return array
      */
@@ -94,7 +100,8 @@ class ReportService
             'broken_assets' => $brokenAssets,
             'total_maintenances' => $totalMaintenances,
             'total_cost' => $totalCost,
-            'maintenances_by_type' => $maintenancesByType,
+            'preventive_maintenances' => $maintenancesByType['preventive'] ?? 0,
+            'corrective_maintenances' => $maintenancesByType['corrective'] ?? 0,
         ];
     }
 }
