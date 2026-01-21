@@ -93,7 +93,7 @@
                 <div class="p-6">
                     <h3 class="text-lg font-semibold text-gray-900 mb-4">Maintenance History</h3>
                     
-                    @if($maintenances->count() > 0)
+                    @if($asset->maintenances->count() > 0)
                         <div class="overflow-x-auto">
                             <table class="min-w-full divide-y divide-gray-200">
                                 <thead class="bg-gray-50">
@@ -106,7 +106,7 @@
                                     </tr>
                                 </thead>
                                 <tbody class="bg-white divide-y divide-gray-200">
-                                    @foreach ($maintenances as $maintenance)
+                                    @foreach ($asset->maintenances as $maintenance)
                                         <tr>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                                                 {{ $maintenance->performed_at->format('M d, Y') }}

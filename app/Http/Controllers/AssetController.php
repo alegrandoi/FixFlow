@@ -64,10 +64,11 @@ class AssetController extends Controller
      */
     public function show(Asset $asset)
     {
-        $asset->load('maintenances.user');
-        $maintenances = $asset->maintenances()->orderBy('performed_at', 'desc')->get();
+        $asset->load(['maintenances' => function ($query) {
+            $query->with('user')->orderBy('performed_at', 'desc');
+        }]);
         
-        return view('assets.show', compact('asset', 'maintenances'));
+        return view('assets.show', compact('asset'));
     }
 
     /**
