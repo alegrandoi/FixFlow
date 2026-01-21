@@ -23,7 +23,11 @@ class ReportController extends Controller
 
     public function assetReport(Asset $asset, Request $request)
     {
-        $range = $request->query('range', 'all');
+        $validated = $request->validate([
+            'range' => 'nullable|in:monthly,yearly,all',
+        ]);
+        
+        $range = $validated['range'] ?? 'all';
         
         $pdf = $this->reportService->generateAssetReport($asset->id, $range);
         
