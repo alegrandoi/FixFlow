@@ -113,7 +113,7 @@
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap">
                                                 <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
-                                                    {{ ucfirst(str_replace('_', ' ', $maintenance->type)) }}
+                                                    {{ $maintenance->type->label() }}
                                                 </span>
                                             </td>
                                             <td class="px-6 py-4 text-sm text-gray-900">
