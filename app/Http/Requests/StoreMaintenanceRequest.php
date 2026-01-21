@@ -11,7 +11,7 @@ class StoreMaintenanceRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,12 @@ class StoreMaintenanceRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'asset_id' => ['required', 'exists:assets,id'],
+            'description' => ['required', 'string'],
+            'cost' => ['required', 'numeric', 'min:0'],
+            'performed_at' => ['required', 'date'],
+            'type' => ['required', 'in:preventive,corrective'],
+            'notes' => ['nullable', 'string'],
         ];
     }
 }
