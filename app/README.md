@@ -39,7 +39,7 @@ class StoreAssetRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:255',
-            'status' => 'required|in:active,broken',
+            'status' => ['required', new Enum(AssetStatus::class)],
         ];
     }
 }
@@ -98,13 +98,20 @@ class Asset extends Model
 ```
 
 ### 📁 Services/
-**Propósito:** Lógica de negocio pesada y compleja.
+**Propósito:** Lógica de negocio compleja que va más allá de operaciones CRUD simples.
 
 Los servicios deben:
-- Contener lógica de negocio compleja
-- Orquestar múltiples modelos
-- Realizar cálculos y transformaciones
+- Contener lógica de negocio que involucre múltiples pasos o validaciones
+- Orquestar operaciones entre múltiples modelos
+- Realizar cálculos complejos y transformaciones de datos
 - Interactuar con APIs externas
+- Manejar transacciones complejas
+
+**Cuándo crear un Service:**
+- Si la lógica del controller supera 10-15 líneas
+- Si necesitas reutilizar la misma lógica en varios controllers
+- Si la operación involucra múltiples modelos
+- Si requieres cálculos o validaciones complejas
 
 **Ejemplo:**
 ```php
